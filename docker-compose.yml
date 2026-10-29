@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: wise-postgres
+    environment:
+      POSTGRES_DB: wise
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "15432:5432"
+    volumes:
+      - wise-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  mailpit:
+    image: axllent/mailpit:v1.32.0
+    container_name: wise-mailpit
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+  rustfs:
+    image: rustfs/rustfs:1.0.1
+    container_name: wise-rustfs
+    environment:
+      RUSTFS_ACCESS_KEY: ${RUSTFS_ACCESS_KEY}
+      RUSTFS_SECRET_KEY: ${RUSTFS_SECRET_KEY}
+      RUSTFS_CONSOLE_ADDRESS: ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - wise-rustfs-data:/data
+volumes:
+  wise-postgres-data:
+  wise-rustfs-data:
