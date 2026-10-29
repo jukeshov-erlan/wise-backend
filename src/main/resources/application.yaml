@@ -1,3 +1,10 @@
 spring:
   application:
     name: wise-backend
+  profiles:
+    default: local
+  config:
+    import: optional:file:.env[.properties]
+
+server:
+  port: 8080
